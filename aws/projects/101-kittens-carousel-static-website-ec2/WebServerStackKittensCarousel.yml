@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS CloudFormation template runs appache server and displays a static webpage on a single EC2 instance. 
+Resources:
+  WebServerInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0cebb45b34604efb8 
+      InstanceType: t2.micro
+      KeyName: testkeyb
+      SecurityGroups:
+       - second_sec_group
+      UserData:
+       'Fn::Base64': 
+         !Sub |
+          #!/bin/bash
+          yum update -y
+​
+          # install apache
+          yum install httpd -y 
+            
+          # start server
+          service httpd start
+          chkconfig httpd on
+          
+          #getting index.html
+          cd /var/www/html 
+        
