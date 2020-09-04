@@ -14,7 +14,7 @@ Resources:
          !Sub |
           #!/bin/bash
           yum update -y
-​
+
           # install apache
           yum install httpd -y 
             
@@ -23,5 +23,6 @@ Resources:
           chkconfig httpd on
           
           #getting index.html
-          cd /var/www/html 
+          cd /var/www/html
+          
          
