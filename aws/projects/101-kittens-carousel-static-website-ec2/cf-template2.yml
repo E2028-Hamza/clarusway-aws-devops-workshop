@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS CloudFormation template runs appache server and displays a static webpage on a single EC2 instance.
+Resources:
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http to client host
+      GroupName: HTTPandSSH
+      Tags:
+        - Key: Name
+          Value: HTTPandSSH
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0         
+  ApacheCFTemplate:
+    Type: "AWS::EC2::LaunchTemplate"
+    Properties:
+      LaunchTemplateName: Web Server of StackName
+      LaunchTemplateData:
+        ImageId: ami-0cebb45b34604efb8
+        InstanceType: t2.micro
+        UserData: 
+          Fn::Base64:
+            !Sub |
+              #!/bin/bash
+              yum update -y
+
+              # install apache
+              yum install httpd -y 
+            
+              # start server
+              service httpd start
+              chkconfig httpd on
+          
+              #getting index.html
+              cd /var/www/html
+              sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/static-web/index.html
+              sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/static-web/cat0.jpg
+              sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/static-web/cat1.jpg
+              sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/static-web/cat2.jpg
+  ApacheCFInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: testkeyb
+      SecurityGroupIds:
+        - !Ref WebServerSecurityGroup
+      Tags:
+        - Key: Name
+          Value: Apache-EC2
+      LaunchTemplate:
+        LaunchTemplateId: !Ref ApacheCFTemplate
+        Version: !GetAtt ApacheCFTemplate.LatestVersionNumber             
+Outputs:
+  InstanceId:
+    Description: InstanceId of the first EC2 instance
+    Value: !Ref ApacheCFInstance
+  PublicDNS:
+    Description: Public DNS Name of the EC2 instance
+    Value: !Join 
+      - "://"
+      - - "http"
+        - !GetAtt 
+          - ApacheCFInstance
+          - PublicDNSName
+  PublicIP:
+    Description: Public IP address of the EC2 instance
+    Value: !GetAtt 
+      - ApacheCFInstance
+      - PublicIp
