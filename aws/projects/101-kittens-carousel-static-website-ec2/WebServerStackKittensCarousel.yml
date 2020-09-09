@@ -28,5 +28,16 @@ Resources:
           sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/static-web/cat0.jpg
           sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/static-web/cat1.jpg
           sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/static-web/cat2.jpg
-          
-         
+
+
+LogicalID:
+  Type: "AWS::EC2::Instance"
+  Properties:    
+    ImageId: String
+    InstanceType: String
+    KeyName: String
+    SecurityGroups:
+      - String
+    Tags:
+      - Tag
+    UserData: String

@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS CloudFormation template runs appache server and displays a static webpage on a single EC2 instance.
+Resources:
+ KittensCarouselSecGr:
+  Type: "AWS::EC2::SecurityGroup"
+  Properties:
+    GroupDescription: Allows SSH and HTTP #required
+    GroupName: HTTP-SSH
+    SecurityGroupIngress:
+    - IpProtocol: tcp
+      FromPort: "80"
+      ToPort: "80"
+      CidrIp: 0.0.0.0/0
+    - IpProtocol: tcp
+      FromPort: "22"
+      ToPort: "22"
+      CidrIp: 0.0.0.0/0        
+ WebServerInstance:
+  Type: "AWS::EC2::Instance"
+  Properties:
+    ImageId: ami-0c94855ba95c71c99
+    InstanceType: t2.micro
+    KeyName: testkeyb
+    SecurityGroups:
+    - Ref: KittensCarouselSecGr
+    Tags:
+     - Key: "Name"
+       Value: !Join 
+         - " "
+         - - "Web Server of"
+           - !Ref "AWS::StackName"
+    UserData:
+        'Fn::Base64': 
+          !Sub |
+           #!/bin/bash
+           yum update -y
+
+           # install apache
+           yum install httpd -y 
+            
+           # start server
+           systemctl start httpd
+           systemctl enable httpd
+           # service httpd start
+           # chkconfig httpd on
+          
+           #getting index.html
+           cd /var/www/html 
+           sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/static-web/index.html
+           sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/static-web/cat0.jpg
+           sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/static-web/cat1.jpg
+           sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/101-kittens-carousel-static-website-ec2/static-web/cat2.jpg
+Outputs:
+  PublicDNS:
+    Description: Public DNS Name of the EC2 instance
+    Value: !Join 
+      - "://"
+      - - "http"
+        - !GetAtt 
+          - WebServerInstance
+          - PublicDnsName
