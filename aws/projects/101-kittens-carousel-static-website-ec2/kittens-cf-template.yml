@@ -1,10 +1,14 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: AWS CloudFormation template runs appache server and displays a static webpage on a single EC2 instance.
+Description: Cloudformation Template for Kittens Carousel Static Website on 
+ EC2. This template deploys Kittens Carousel Static website on Amazon 
+ Linux 2 EC2 Instance with custom security group allowing http connections 
+ on 80. Kittens Carousel Static Website is downloaded from GitHub repository,
+ then deployed on Apache Web Server.
 Resources:
- KittensCarouselSecGr:
+ WebServerSecurityGroup:
   Type: "AWS::EC2::SecurityGroup"
   Properties:
-    GroupDescription: Allows SSH and HTTP #required
+    GroupDescription: Enable HTTP for Apache Web Server #required
     GroupName: HTTP-SSH
     SecurityGroupIngress:
     - IpProtocol: tcp
@@ -22,10 +26,10 @@ Resources:
     InstanceType: t2.micro
     KeyName: testkeyb
     SecurityGroups:
-    - Ref: KittensCarouselSecGr
+    - Ref: WebServerSecurityGroup
     Tags:
      - Key: "Name"
-       Value: !Join 
+       Value: !Join    # !Sub Web Server of ${AWS::StackName} Stack
          - " "
          - - "Web Server of"
            - !Ref "AWS::StackName"
@@ -39,7 +43,7 @@ Resources:
            yum install httpd -y 
             
            # start server
-           systemctl start httpd
+           systemctl start httpd  
            systemctl enable httpd
            # service httpd start
            # chkconfig httpd on
