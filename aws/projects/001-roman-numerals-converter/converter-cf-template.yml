@@ -19,6 +19,7 @@ Resources:
     Type: "AWS::EC2::SecurityGroup"
     Properties:
       GroupDescription: Enables SSH and HTTP
+      GroupName: HTTP-SSH
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: "80"
@@ -58,16 +59,26 @@ Resources:
            sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/001-roman-numerals-converter/templates/result.html
            
            cd ..
-           sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/001-roman-numerals-converter/converter-app.py
+           sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/001-roman-numerals-converter/converter_app.py
 
            python3 converter_app.py          
 
 Outputs:
   WebsiteURL:
     Description: URL for application
-    Value: !Sub 
-      - http://${PublicAddress}
-      - PublicAddress: !GetAtt WebServerInstance.PublicDnsName
+    Value: !Join [ "://", [ "http", !GetAtt WebServerInstance.PublicDnsName ] ]
 
 
-    #Value: !Join [ "://", [ "http", !GetAtt WebServerInstance.PublicDnsName ] ]
+    #Value: !Sub 
+    #  - http://${PublicAddress}
+    #  - PublicAddress: !GetAtt WebServerInstance.PublicDnsName
+
+    #Value: !Join 
+    #  - "://"
+    #  - - "http"
+    #    - !GetAtt 
+    #      - WebServerInstance
+    #      - PublicDnsName
+
+
+    
