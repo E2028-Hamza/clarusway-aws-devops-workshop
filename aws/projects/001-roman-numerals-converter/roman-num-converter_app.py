@@ -5,7 +5,7 @@ converter_app = Flask(__name__)
 @converter_app.route("/", methods = ["GET", "POST"])
 def index():
     if request.method == 'POST':    
-        user_input = request.form["number"]Description: URL for application
+        user_input = request.form["number"]
         if user_input.isalpha() or user_input == "0":
             return render_template("index.html", developer_name = "Hamza Seyyah", not_valid= True)
         else:
@@ -29,5 +29,5 @@ def index():
         
 
 if __name__ == '__main__':
-    #converter_app.run(debug = True)
-    converter_app.run(host='0.0.0.0', port=80)
+    converter_app.run(debug = True)
+    #converter_app.run(host='0.0.0.0', port=80)
