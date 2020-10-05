@@ -58,10 +58,11 @@ Resources:
  
            mkdir templates
            cd templates 
-           sudo wget 
+           sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/002-milliseconds-converter/templates/index.html
+           sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/002-milliseconds-converter/templates/result.html
            
            cd ..
-           sudo wget 
+           sudo wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/002-milliseconds-converter/app.py
            python3 app.py
 
   MyApplicationLoadBalancer:

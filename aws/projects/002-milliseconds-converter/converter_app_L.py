@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 
-from Millisecond_func import *
+from millisecond_func_L import *
 
 converter_app = Flask(__name__)
 
@@ -15,13 +15,10 @@ def check_do():
         user_input = request.form["number"]
 
         if isValid(user_input) == False:
-        
             return render_template("index.html", developer_name = "Charlie Falcon", not_valid= True)
         
-        else:
-            
+        else:    
             return render_template("result.html", developer_name = "Charlie Falcon", milliseconds = user_input, result = doCalc(user_input))
-
 
 if __name__ == '__main__':
     converter_app.run(debug = True)
