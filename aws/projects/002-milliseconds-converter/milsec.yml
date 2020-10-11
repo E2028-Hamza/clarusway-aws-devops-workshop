@@ -1,0 +1,161 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: 'AWS CloudFormation Sample Template AutoScaling:
+  Create load balanced and Auto Scaled sample web site coded in Python and deployed as a web application with Flask.
+  emplate should create Application Load Balancer with Auto Scaling Group of Amazon Linux 2 EC2 Instances within default VPC.
+  Application Load Balancer is placed within a security group which allows HTTP (80) connections from anywhere.
+  Milliseconds Converter Application Website URL should be given as output by Cloudformation Service, after the stack created.'
+
+Parameters:
+
+  RecentKeys:
+    Description: The EC2 Key Pair to allow SSH access to the instances
+    Type: AWS::EC2::KeyPair::KeyName
+    
+
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VpcId of your existing Vpc
+
+  Subnets:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: The list of SubnetIds in your VPC
+  
+  AuSclPolTargetValue:
+    Description: Enter your Target Value that triggers the Autoscaling
+    Type: String
+    Default: "60"
+
+Resources:
+
+  MillisecAuScaGroup:
+    Type: "AWS::AutoScaling::AutoScalingGroup"
+    Properties:
+      AutoScalingGroupName: MillisecAuScaGroup
+      AvailabilityZones: !GetAZs
+      DesiredCapacity: 2
+      HealthCheckGracePeriod: 90
+      HealthCheckType: ELB
+      LaunchTemplate:
+        LaunchTemplateId: !Ref AppInsLaunchTemp
+        Version: !GetAtt AppInsLaunchTemp.LatestVersionNumber
+      #LoadBalancerNames:
+        #- !Ref AppLoadBalancer
+      MaxSize: 3 #required
+      MinSize: 1 #required
+      TargetGroupARNs:
+        - !Ref ALBTargetGrp
+
+  #MillisecAuScaGroupPol:
+    #Type: "AWS::AutoScaling::ScalingPolicy"
+    #Properties:
+      #AutoScalingGroupName: !Ref MillisecAuScaGroup #required
+      #PolicyType: TargetTrackingScaling
+      #TargetTrackingConfiguration:
+          #PredefinedMetricSpecification: 
+             #PredefinedMetricType: ASGAverageCPUUtilization
+          #TargetValue: 50
+
+  AppLoadBalancer:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      SecurityGroups:
+        - !Ref ELBSecurityGroup
+      Subnets: !Ref Subnets
+      Type: application
+
+  ALBListener:
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties:
+      DefaultActions: #required
+        - Type: forward
+          TargetGroupArn: !Ref ALBTargetGrp
+      LoadBalancerArn: !Ref AppLoadBalancer #required
+      Port: 80 #required
+      Protocol: HTTP
+
+  ALBTargetGrp:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckEnabled: True
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /
+      HealthCheckPort: 80
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 3
+      Matcher:
+        HttpCode: 200
+      Name: ALBTargetGrp
+      Port: 80
+      Protocol: HTTP
+      TargetType: instance
+      UnhealthyThresholdCount: 2
+      VpcId: !Ref VpcId
+
+
+  AppInsLaunchTemp:
+    Type: "AWS::EC2::LaunchTemplate"
+    Properties:
+      LaunchTemplateData:
+        ImageId: ami-0947d2ba12ee1ff75
+        InstanceType: "t2.micro"
+        KeyName: !Ref RecentKeys
+        SecurityGroupIds:
+          - !GetAtt LaunchTempSecurityGroup.GroupId
+        #SecurityGroups: 
+          #- !Ref LaunchTempSecurityGroup
+        TagSpecifications:
+          - ResourceType: instance 
+            Tags:
+            - Key: "Name"
+              Value: !Sub Webserver of ${AWS::StackName}
+        UserData: 
+          Fn::Base64: !Sub |
+              #!/bin/bash
+                
+              yum update -y
+              yum install python3 -y
+              pip3 install flask
+              mkdir templates
+              cd templates 
+              wget https://raw.githubusercontent.com/charliefalcon/aws-devops-workshop/master/aws/projects/003-milliseconds-converter/templates/index.html
+              wget https://raw.githubusercontent.com/charliefalcon/aws-devops-workshop/master/aws/projects/003-milliseconds-converter/templates/result.html
+              cd ..
+              wget https://raw.githubusercontent.com/charliefalcon/aws-devops-workshop/master/aws/projects/003-milliseconds-converter/converter_app.py
+              wget https://raw.githubusercontent.com/charliefalcon/aws-devops-workshop/master/aws/projects/003-milliseconds-converter/Millisecond_func.py
+
+              python3 converter_app.py
+
+  ELBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enables HTTP
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      
+     
+        
+  LaunchTempSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable HTTP from the load balancer only
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        SourceSecurityGroupId: !Ref ELBSecurityGroup
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0 
+
+Outputs:
+  URL:
+    Description: The URL of the website
+    Value: !Join ['', ['http://', !GetAtt AppLoadBalancer.DNSName]]
