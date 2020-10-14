@@ -12,7 +12,6 @@ Parameters:
     Description: The EC2 Key Pair to allow SSH access to the instances
     Type: AWS::EC2::KeyPair::KeyName
     
-
   VpcId:
     Type: AWS::EC2::VPC::Id
     Description: VpcId of your existing Vpc
@@ -123,7 +122,7 @@ Resources:
               cd ..
               wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/aws/projects/002-milliseconds-converter/app.py
 
-              python3 converter_app.py
+              python3 app.py
 
   ELBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
