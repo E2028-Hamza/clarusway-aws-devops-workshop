@@ -486,7 +486,7 @@ docker run -d --name nginx-new -p 8080:80 -v /home/ec2-user/webpage:/usr/share/n
 
 ```bash
 docker exec -it nginx-new bash
-root@a7e3d276a147:/# cd usr/share/nginx/html
+root@a7e3d276a147:/# cd /usr/share/nginx/html
 root@a7e3d276a147:/usr/share/nginx/html# ls 
 index.html
 root@a7e3d276a147:/usr/share/nginx/html# cat index.html 

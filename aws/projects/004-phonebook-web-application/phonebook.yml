@@ -35,14 +35,6 @@ Resources:
           ToPort: 3306
           CidrIp: 0.0.0.0/0
 
-  RDSSecurityGroup:
-    Type: AWS::RDS::DBSecurityGroup
-    Properties:
-      DBSecurityGroupIngress: #required
-        - EC2SecurityGroupName: 
-            Ref: WebServerSecurityGroup
-      GroupDescription: DataBasaSecurityGroup #required
-  
   WebServerLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:
@@ -132,6 +124,14 @@ Resources:
       TargetGroupARNs:
         - !Ref WebServerTargetGroup
 
+  RDSSecurityGroup:
+    Type: AWS::RDS::DBSecurityGroup
+    Properties:
+      DBSecurityGroupIngress: #required
+        - EC2SecurityGroupName: 
+            Ref: WebServerSecurityGroup
+      GroupDescription: DataBasaSecurityGroup #required
+  
   RDSinstance:
     Type: "AWS::RDS::DBInstance"
     DeletionPolicy: Delete
@@ -140,15 +140,16 @@ Resources:
       BackupRetentionPeriod: 7
       DBInstanceClass: db.t2.micro #required
       DBInstanceIdentifier: phonebookdatabase
-      DBName: phonebookDB
+      DBName: phonebook
       DBSecurityGroups: 
         - !Ref RDSSecurityGroup
       #DeleteAutomatedBackups: true
       #DeletionProtection: true
       Engine: mysql
       EngineVersion: "8.0.19"     
-      MasterUserPassword: "Pl123456"
+      MasterUserPassword: "clarusway-1"
       MasterUsername: "admin"
+      MultiAZ: false
       Port: "3306"
       #PreferredBackupWindow: "01:00-02.00"
       #PreferredMaintenanceWindow: "mon:03:00-mon:04.00"

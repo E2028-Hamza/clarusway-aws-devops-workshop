@@ -77,6 +77,13 @@ docker ps
 docker network inspect bridge | less
 ```
 
+- Get the IP of `clarus1st` container.
+
+```bash
+docker inspect clarus2nd |grep IPAddress
+```
+
+
 - Connect to the `clarus1st` container.
 
 ```bash
@@ -137,7 +144,6 @@ docker run -dit --network clarusnet --name clarus1st alpine ash
 docker run -dit --network clarusnet --name clarus2nd alpine ash
 docker run -dit --name clarus3rd alpine ash
 docker run -dit --name clarus4th alpine ash
-docker network connect clarusnet clarus4th
 ```
 
 - List all running containers and show there up and running.
@@ -204,7 +210,7 @@ ping -c 4 172.17.0.2
 
 ```bash
 docker stop clarus1st clarus2nd clarus3rd clarus4th
-docker rm clarus1st clarus2nd clarus3rd clarus4th
+docker rm clarus1st clarus2nd clarus3rd clarus4th        veya       docker rm -f $(docker ps -aq)
 ```
 
 - Delete `clarusnet` network
