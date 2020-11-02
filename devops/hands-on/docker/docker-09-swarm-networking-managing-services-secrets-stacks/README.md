@@ -325,6 +325,7 @@ docker stack services clarus-todoapi
 
 ```bash
 docker stack ps clarus-todoapi
+docker stack ps clarus-todoapi | grep Running
 ```
 
 - Check if the `clarus-todoapi` is running by entering `http://<ec2-host-name>` in a browser.

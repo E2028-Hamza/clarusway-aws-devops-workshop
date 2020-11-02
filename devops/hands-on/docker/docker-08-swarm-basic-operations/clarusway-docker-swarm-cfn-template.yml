@@ -37,6 +37,7 @@ Resources:
           FromPort: 8080
           ToPort: 8080
           CidrIp: 0.0.0.0/0
+
   DockerMachine1:
     Type: AWS::EC2::Instance
     Properties:
@@ -49,6 +50,7 @@ Resources:
         -                        
           Key: Name
           Value: !Sub Docker Machine 1st of ${AWS::StackName}
+
   DockerMachine2:
     Type: AWS::EC2::Instance
     Properties:
@@ -60,7 +62,8 @@ Resources:
       Tags:                
         -                        
           Key: Name
-          Value: !Sub Docker Machine 2nd of ${AWS::StackName} 
+          Value: !Sub Docker Machine 2nd of ${AWS::StackName}
+
   DockerMachine3:
     Type: AWS::EC2::Instance
     Properties:
@@ -72,7 +75,8 @@ Resources:
       Tags:                
         -                        
           Key: Name
-          Value: !Sub Docker Machine 3rd of ${AWS::StackName} 
+          Value: !Sub Docker Machine 3rd of ${AWS::StackName}
+
   DockerMachine4:
     Type: AWS::EC2::Instance
     Properties:
@@ -84,7 +88,8 @@ Resources:
       Tags:                
         -                        
           Key: Name
-          Value: !Sub Docker Machine 4th of ${AWS::StackName} 
+          Value: !Sub Docker Machine 4th of ${AWS::StackName}
+
   DockerMachine5:
     Type: AWS::EC2::Instance
     Properties:
@@ -96,7 +101,8 @@ Resources:
       Tags:                
         -                        
           Key: Name
-          Value: !Sub Docker Machine 5th of ${AWS::StackName} 
+          Value: !Sub Docker Machine 5th of ${AWS::StackName}
+           
 Outputs:
   1stDockerMachineDNSName:
     Description: Docker Machine 1st DNS Name
