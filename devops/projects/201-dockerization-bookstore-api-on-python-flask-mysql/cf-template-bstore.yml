@@ -49,7 +49,10 @@ Resources:
           chmod +x /usr/local/bin/docker-compose
           mkdir api-bookstore
           cd api-bookstore
-          wget 
+          wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/devops/projects/201-dockerization-bookstore-api-on-python-flask-mysql/Dockerfile
+          wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/devops/projects/201-dockerization-bookstore-api-on-python-flask-mysql/docker-compose.yml
+          wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/devops/projects/201-dockerization-bookstore-api-on-python-flask-mysql/requirements.txt
+          wget https://raw.githubusercontent.com/E2028-Hamza/clarusway-aws-devops-workshop/master/devops/projects/201-dockerization-bookstore-api-on-python-flask-mysql/bookstore-api.py  
           docker-compose up -d
 
 Outputs:
