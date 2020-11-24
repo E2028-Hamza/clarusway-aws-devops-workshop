@@ -125,7 +125,3 @@ ssh -i .ssh/call-training.pem ec2-user@ec2-3-133-106-98.us-east-2.compute.amazon
   - Click to the build number to reach build page.
 
   - Show the console results from `Console Output`.
-
-
-
-

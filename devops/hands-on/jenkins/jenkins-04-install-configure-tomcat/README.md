@@ -145,12 +145,12 @@ cd /opt/tomcat/conf
   limitations under the License.
 -->
 <Context antiResourceLocking="false" privileged="true" >
-	<!--
+<!--
   <CookieProcessor className="org.apache.tomcat.util.http.Rfc6265CookieProcessor"
                    sameSiteCookies="strict" />
   <Valve className="org.apache.catalina.valves.RemoteAddrValve"
          allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" />
-	-->
+-->
   <Manager sessionAttributeValueClassNameFilter="java\.lang\.(?:Boolean|Integer|Long|Number|String)|org\.apache\.catalina\.filters\.CsrfPreventionFilter\$LruCache(?:\$1)?|java\.util\.(?:Linked)?HashMap"/>
 </Context>
 ```
@@ -178,7 +178,7 @@ cd /opt/tomcat/conf
 <Context antiResourceLocking="false" privileged="true" >
 <!--
   <CookieProcessor className="org.apache.tomcat.util.http.Rfc6265CookieProcessor"
-	sameSiteCookies="strict" />
+	             sameSiteCookies="strict" />
   <Valve className="org.apache.catalina.valves.RemoteAddrValve"
          allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" />
 -->
