@@ -3192,9 +3192,9 @@ git checkout feature/msp-23
 
   * Inbound rules;
 
-    * Allow TCP on port 80 from Application Load Balancer.
+    * Allow HTTP protocol (TCP on port 80) from Application Load Balancer.
 
-    * Allow TCP on port 443 from any source that needs to use Rancher UI or API.
+    * Allow HTTPS protocol (TCP on port 443) from any source that needs to use Rancher UI or API.
 
     * Allow TCP on port 6443 from any source that needs to use Kubernetes API server(ex. Jenkins Server).
   
@@ -3204,7 +3204,7 @@ git checkout feature/msp-23
 
     * Allow SSH on port 22 to any node IP from a node created using Node Driver.
 
-    * Allow TCP on port 443 to `35.160.43.145/32`, `35.167.242.46/32`, `52.33.59.17/32` for catalogs of `git.rancher.io`.
+    * Allow HTTPS protocol (TCP on port 443) to `35.160.43.145/32`, `35.167.242.46/32`, `52.33.59.17/32` for catalogs of `git.rancher.io`.
 
     * Allow TCP on port 2376 to any node IP from a node created using Node Driver for Docker machine TLS port.
 
@@ -3390,20 +3390,6 @@ SSH User          : rancher
 Label             : os=rancheros
 ```
 
-* Create a Kubernetes cluster using Rancher with RKE and new nodes in AWS (on one EC2 instance only) and name it as `petclinic-cluster`.
-
-```text
-Cluster Type      : Amazon EC2
-Name Prefix       : petclinic-k8s-instance
-Count             : 1
-etcd              : checked
-Control Plane     : checked
-Worker            : checked
-```
-
-* Create `petclinic-staging-ns` and `petclinic-prod-ns` namespaces on `petclinic-cluster` with Rancher.
-
-
 ## MSP 26 - Prepare a Staging Pipeline
 
 * Create `feature/msp-26` branch from `release`.
@@ -3413,6 +3399,19 @@ git checkout release
 git branch feature/msp-26
 git checkout feature/msp-26
 ```
+
+* Create a Kubernetes cluster using Rancher with RKE and new nodes in AWS  and name it as `petclinic-cluster-staging`.
+
+```text
+Cluster Type      : Amazon EC2
+Name Prefix       : petclinic-k8s-instance
+Count             : 3
+etcd              : checked
+Control Plane     : checked
+Worker            : checked
+```
+
+* Create `petclinic-staging-ns` namespace on `petclinic-cluster-staging` with Rancher.
 
 * Create a Jenkins Job and name it as `create-ecr-docker-registry-for-petclinic-staging` to create Docker Registry for `Staging` manually on AWS ECR.
 
@@ -3605,6 +3604,19 @@ git branch feature/msp-27
 git checkout feature/msp-27
 ```
 
+* Create a Kubernetes cluster using Rancher with RKE and new nodes in AWS (on one EC2 instance only) and name it as `petclinic-cluster`.
+
+```text
+Cluster Type      : Amazon EC2
+Name Prefix       : petclinic-k8s-instance
+Count             : 3
+etcd              : checked
+Control Plane     : checked
+Worker            : checked
+```
+
+* Create `petclinic-prod-ns` namespace on `petclinic-cluster` with Rancher.
+
 * Create a Jenkins Job and name it as `create-ecr-docker-registry-for-petclinic-prod` to create Docker Registry for `Production` manually on AWS ECR.
 
 ``` bash
@@ -3790,44 +3802,9 @@ git branch feature/msp-28
 git checkout feature/msp-28
 ```
 
-* Create a target group with name of `matt-petclinic-http-443-tg` with following setup and add the `petclinic application instances` to it.
+* Create an `A` record of `petclinic.clarusway.us` in your hosted zone (in our case `clarusway.us`) using AWS Route 53 domain registrar and bind it to your `petclinic cluster`.
 
-```text
-Target type         : instance
-Protocol            : HTTPS
-Port                : 443
-
-<!-- Health Checks Settings -->
-Protocol            : HTTPS
-Path                : /healthz
-Port                : traffic port
-Healthy threshold   : 3
-Unhealthy threshold : 3
-Timeout             : 5 seconds
-Interval            : 10 seoconds
-Success             : 200
-```
-
-* Create Application Load Balancer with name of `matt-petclinic-alb` using `matt-rke-alb-sg` security group with following settings and add `matt-petclinic-http-443-tg` target group to it.
-
-```text
-Scheme              : internet-facing
-IP address type     : ipv4
-
-<!-- Listeners-->
-Protocol            : HTTPS/HTTP
-Port                : 443/80
-Availability Zones  : Select AZs of RKE instances
-Target group        : `matt-petclinic-http-443-tg` target group
-```
-
-* Configure ALB Listener of HTTP on `Port 80` to redirect traffic to HTTPS on `Port 443`.
-
-* Create DNS A record for `rancher.clarusway.us` and 
-
-* Create an `A` record of `petclinic003.clarusway.us` in your hosted zone (in our case `clarusway.us`) using AWS Route 53 domain registrar and attach the `matt-petclinic-alb` application load balancer to it.
-
-* Configure TLS(SSL) certificate for `petclinic003.clarusway.us` using `cert-manager` on petclinic K8s cluster with the following steps.
+* Configure TLS(SSL) certificate for `petclinic.clarusway.us` using `cert-manager` on petclinic K8s cluster with the following steps.
 
 * Log into Jenkins Server and configure the `kubectl` to connect to petclinic cluster by getting the `Kubeconfig` file from Rancher and save it as `$HOME/.kube/config` or set `KUBECONFIG` environment variable.
 
